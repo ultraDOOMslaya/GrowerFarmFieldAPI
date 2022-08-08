@@ -1,6 +1,7 @@
 package GrowerFarmFieldAPI.Services;
 
 import GrowerFarmFieldAPI.Assemblers.GrowerModelAssembler;
+import GrowerFarmFieldAPI.DTO.GrowerVO;
 import GrowerFarmFieldAPI.Exceptions.GrowerNotFoundException;
 import GrowerFarmFieldAPI.Models.Grower;
 import GrowerFarmFieldAPI.Repository.GrowerRepository;
@@ -30,8 +31,10 @@ public class GrowerService implements IGrowerService {
     GrowerModelAssembler assembler;
 
     public CollectionModel<EntityModel<Grower>> getGrowers() {
+
+
         List<EntityModel<Grower>> growers =  repo.findAll().stream()
-                .map(grower -> EntityModel.of(grower))
+                .map(grower -> assembler.toModel(grower))
                 .collect(Collectors.toList());
 
         return CollectionModel.of(growers);
@@ -43,8 +46,12 @@ public class GrowerService implements IGrowerService {
         return grower;
     }
 
-    public EntityModel<Grower> createGrower(Grower grower) {
-        EntityModel<Grower> entityModel = assembler.toModel(repo.save(grower));
+    public EntityModel<Grower> createGrower(GrowerVO grower) {
+        Grower growerEntity = new Grower();
+        growerEntity.setName(grower.getName());
+        growerEntity.setFarms(grower.getFarms());
+
+        EntityModel<Grower> entityModel = assembler.toModel(repo.save(growerEntity));
 
         return entityModel;
     }

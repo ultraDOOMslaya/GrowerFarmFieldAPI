@@ -1,22 +1,15 @@
-package GrowerFarmFieldAPI.Models;
+package GrowerFarmFieldAPI.DTO;
 
-import javax.persistence.*;
+import GrowerFarmFieldAPI.Models.Farm;
+
 import java.util.List;
 
-@Entity
-@Table(name = "grower")
-public class Grower {
+public class GrowerVO {
 
-    @Id
-    @Column(name = "id", updatable = false)
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @Column(name = "name")
     private String name;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "grower_id")
     private List<Farm> farms;
 
     public long getId() {

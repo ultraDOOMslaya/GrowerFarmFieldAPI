@@ -15,6 +15,6 @@ public class GrowerModelAssembler implements RepresentationModelAssembler<Grower
     public EntityModel<Grower> toModel(Grower grower) {
         return EntityModel.of(grower,
                 linkTo(methodOn(GrowerController.class).grower(grower.getId())).withSelfRel(),
-                linkTo(methodOn(GrowerController.class).growers()).withRel("growers"));
+                linkTo(methodOn(GrowerController.class).growers()).withSelfRel());
     }
 }

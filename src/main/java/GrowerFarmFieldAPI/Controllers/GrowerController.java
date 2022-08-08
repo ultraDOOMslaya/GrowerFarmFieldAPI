@@ -1,10 +1,11 @@
 package GrowerFarmFieldAPI.Controllers;
 
-import GrowerFarmFieldAPI.Exceptions.GrowerNotFoundException;
+import GrowerFarmFieldAPI.DTO.GrowerVO;
 import GrowerFarmFieldAPI.Models.Grower;
 import GrowerFarmFieldAPI.Repository.GrowerRepository;
 import GrowerFarmFieldAPI.Services.GrowerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.ResponseEntity;
@@ -12,8 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.Optional;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 public class GrowerController {
@@ -23,13 +24,15 @@ public class GrowerController {
     @Autowired
     GrowerService growerService;
 
-    @GetMapping("/Grower")
-    public ResponseEntity<?> growers() {
-        var entityModel = growerService.getGrowers();
+    @Autowired
+    GrowerRepository repo;
 
-        return ResponseEntity
-                .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
-                .body(entityModel);
+    @GetMapping("/Grower")
+    public CollectionModel<EntityModel<Grower>> growers() {
+        var collectionModel = growerService.getGrowers();
+
+        return CollectionModel.of(collectionModel,
+                linkTo(methodOn(GrowerController.class).growers()).withSelfRel());
     }
 
     @GetMapping("/Grower/{id}")
@@ -42,8 +45,7 @@ public class GrowerController {
     }
 
     @PostMapping("/Grower")
-    public ResponseEntity<?> createGrower(@RequestBody Grower grower) {
-        System.out.println("**** Hit Growers POST ****");
+    public ResponseEntity<?> createGrower(@RequestBody GrowerVO grower) {
         var entityModel = growerService.createGrower(grower);
 
         return ResponseEntity
